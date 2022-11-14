@@ -1,10 +1,15 @@
 package oopguid;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Collections;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -21,9 +26,22 @@ import javax.swing.WindowConstants;
 public class OOPGUID {
     
     private static JFrame frame;
-    private JButton[] gombok;
-    private JLabel bejelentkezes, jatek;
-    private JLabel pin, beall1;
+    private static JButton[] gombok;
+    private static final int DB = 10;
+     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
+    private javax.swing.JButton jButton9;
+    private JLabel lblLeiras;
+    private JTextField textField;
+    private boolean keveres;
+    private JCheckBox kever;
     
     
 
@@ -82,54 +100,26 @@ public class OOPGUID {
         //Fülecskék
         JTabbedPane ful = new JTabbedPane();
         ful.setOpaque(true);
+        /*
+        Ugyanigy meg kell csináln i a pinkódosat is
+        PIN kód panelhez adom a gombokat hozzá
+        a pinkódpanelt pedig a bejelentkezés panelhez adom hozzá
         
-        bejelentkezes = new JLabel();
-        jatek = new JLabel();
+        ha megvannak a gombok, akkor bele kell rakni egy listába
+        újra-akkor alaphelyzet - settext-alaphelyzetbe átirogatjuk a gombokat - nem alaphelyzetbe rakjuk
+        keverésnél a számlista megkeverése
+        
+        kilép - popup belső oszhtály,window adapterből öröklődik, a window closi ng metódust kell felülírni
+        a frame add window listener paramétere az új postály, kilép metódus
+        
+        */
         
         JPanel bejelentkezesPanel = new JPanel();
-        bejelentkezesPanel.add(bejelentkezes = new JLabel());
-        ful.addTab("Bejelentkezés", bejelentkezesPanel);
-        JPanel jatekPanel = new JPanel();
-        jatekPanel.add(jatek = new JLabel());
-        ful.addTab("Játék", jatekPanel);
+        bejelentkezesPanel.add(new JLabel("Bejelentkezés"));
+        //bejelentkezés - pin kód
+        JPanel pin = new JPanel();
+        bejelentkezesPanel.setLayout(new BorderLayout());
         
-        frame.add(ful);
-        //Fülecskék vége 
-        //gombokini();
-        //Jpanelek 
-        //Bejelentkezés
-        
-        pin = new JLabel();
-        /* alsó tartalma 
-        for (JButton b:gombok) {
-            pin.add(b);
-        }
-        
-        beall1 = new JLabel();
-        
-        JCheckBox kever = new JCheckBox("kever");
-        JLabel lblLeiras = new JLabel("<html><p>Kód:</center></html>");
-        JTextField textField = new JTextField();
-        
-        beall1.add(kever);
-        beall1.add(lblLeiras);
-        beall1.add(textField);
-        
-        bejelentkezes.add(pin);
-        bejelentkezes.add(beall1);
-        
-         JButton gomb1 = new JButton("1");
-        bejelentkezes.add(gomb1);*/ 
-        
-        
-        JButton gomb1 = new JButton("1");
-        pin.add(gomb1);
-        
-        frame.setVisible(true);
-
-    }
-
-    private void gombokini() {
         JButton gomb1 = new JButton("1");
         JButton gomb2 = new JButton("2");
         JButton gomb3 = new JButton("3");
@@ -140,6 +130,8 @@ public class OOPGUID {
         JButton gomb8 = new JButton("8");
         JButton gomb9 = new JButton("9");
         JButton gomb0 = new JButton("0");
+        
+       gombok = new JButton[DB];
         
         gombok[0] = gomb0;
         gombok[1] = gomb1;
@@ -155,8 +147,41 @@ public class OOPGUID {
          for (JButton b : gombok) {
             b.addActionListener(new KattintasListener());
         }
+        
+         GridLayout grid = new GridLayout(4,3);
+         pin.setLayout(grid);
+        
+         for (int i = 0; i < DB; i++) {
+            pin.add(gombok[i]);
+        }
+        
+        bejelentkezesPanel.add(pin,BorderLayout.WEST);
+        
+        //bejelentkezés - beállítás
+        JPanel beall1 = new JPanel();
+        GridLayout grid2 = new GridLayout(1,1);
+        beall1.setLayout(grid2);
+        
+        kever = new JCheckBox("kever");
+        lblLeiras = new JLabel("<html><p>Kód:</center></html>");
+        textField = new JTextField();
+        
+        beall1.add(kever);
+        beall1.add(lblLeiras);
+        beall1.add(textField);
+        
+        bejelentkezesPanel.add(beall1,BorderLayout.EAST);
+        ful.addTab("Bejelentkezés", bejelentkezesPanel);
+        JPanel jatekPanel = new JPanel();
+        jatekPanel.add(new JLabel("Jatek"));
+        ful.addTab("Játék", jatekPanel);
+        
+        frame.add(ful);
+        //Fülecskék vége 
+        
+        frame.setVisible(true);
+
     }
-    
     
     private static class MenuKilep implements ActionListener {
         @Override
@@ -188,9 +213,29 @@ public class OOPGUID {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            int i = hanyadik((JButton)e.getSource());
+            String istring = String.valueOf(i);
+            String pinkod = "";
+            pinkod = pinkod+istring;
+            //textField.setText(pinkod);
             
         }
-    }
-
+        private int hanyadik(JButton b){
+            int i = 0;
+            while(b != gombok[i]){
+                i++;
+            }
+            gombok[i].setBackground(Color.BLUE);
+            return i;
+        }
+    }/*
+ private void chbKozepreItemStateChanged(java.awt.event.ItemEvent evt) {                                            
+        
+        keveres = kever.isSelected();
+        Collections.shuffle(gombok);
+        
+    }                                           
+*/
+    
 
 }
